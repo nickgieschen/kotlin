@@ -22,6 +22,7 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.Collections;
@@ -39,7 +40,7 @@ abstract class JetDeclarationStub<T extends StubElement> extends JetElementImplS
     @Override
     @Nullable
     public JetModifierList getModifierList() {
-        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
+        return getStubOrPsiChild(JetStubElementTypes.MODIFIER_LIST);
     }
 
     @Override

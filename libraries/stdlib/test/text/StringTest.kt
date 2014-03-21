@@ -55,14 +55,5 @@ class StringTest {
         assertEquals("bcd", "abcde".substring(1..3))
         assertEquals("dcb", "abcde".slice(3 downTo 1))
         assertEquals("edab", "abcde".slice(iter))
-
-        val builder = StringBuilder()
-        builder.append("ABCD")
-        builder.append("abcd")
-        // ABCDabcd
-        // 01234567
-        assertEquals("BCDabc", builder.slice(1..6))
-        assertEquals("baD", builder.slice(5 downTo 3))
-        assertEquals("aDAB", builder.slice(iter))
     }
 }

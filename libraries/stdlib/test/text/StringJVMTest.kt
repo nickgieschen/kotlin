@@ -364,4 +364,17 @@ class StringJVMTest {
         assertEquals("", result)
 
     }
+
+    test fun slice() {
+        val iter = listOf(4, 3, 0, 1)
+
+        val builder = StringBuilder()
+        builder.append("ABCD")
+        builder.append("abcd")
+        // ABCDabcd
+        // 01234567
+        assertEquals("BCDabc", builder.slice(1..6))
+        assertEquals("baD", builder.slice(5 downTo 3))
+        assertEquals("aDAB", builder.slice(iter))
+    }
 }

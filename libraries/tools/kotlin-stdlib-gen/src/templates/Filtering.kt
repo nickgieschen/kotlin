@@ -28,7 +28,9 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        include(Collections)
+        body(Strings) { "return substring(Math.min(n, size))" }
+        returns(Strings) { "String"}
+
         body(Collections, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (n >= size)
@@ -57,6 +59,9 @@ fun filtering(): List<GenericFunction> {
             return list
             """
         }
+
+        body(Strings) { "return substring(0, Math.min(n, size))" }
+        returns(Strings) { "String"}
 
         doc(Streams) { "Returns a stream containing first *n* elements" }
         returns(Streams) { "Stream<T>" }
@@ -103,6 +108,17 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        returns(Strings) { "String"}
+        body(Strings) {
+            """
+            for (index in indices)
+                if(!predicate(get(index))) {
+                    return substring(index)
+                }
+            return ""
+            """
+        }
+
         inline(false, Streams)
         doc(Streams) { "Returns a stream containing all elements except first elements that satisfy the given *predicate*" }
         returns(Streams) { "Stream<T>" }
@@ -140,6 +156,17 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        returns(Strings) { "String"}
+        body(Strings) {
+            """
+            for (index in indices)
+                if(!predicate(get(index))) {
+                    return substring(0, index)
+                }
+            return ""
+            """
+        }
+
         inline(false, Streams)
         doc(Streams) { "Returns a stream containing first elements satisfying the given *predicate*" }
         returns(Streams) { "Stream<T>" }
@@ -161,6 +188,13 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        returns(Strings) { "String"}
+        body(Strings) {
+            """
+            return filterTo(StringBuilder(), predicate).toString()
+            """
+        }
+
         inline(false, Streams)
         doc(Streams) { "Returns a stream containing all elements matching the given *predicate*" }
         returns(Streams) { "Stream<T>" }
@@ -176,7 +210,7 @@ fun filtering(): List<GenericFunction> {
         inline(true)
 
         doc { "Appends all elements matching the given *predicate* into the given *collection*" }
-        typeParam("C: MutableCollection<in T>")
+        typeParam("C: TCollection")
         returns("C")
 
         body {
@@ -185,6 +219,15 @@ fun filtering(): List<GenericFunction> {
             return collection
             """
         }
+
+        doc(Strings) { "Appends all characters matching the given *predicate* to the given *collection*" }
+        body(Strings) {
+            """
+            for (element in this) if (predicate(element)) collection.append(element)
+            return collection
+            """
+        }
+
         include(Maps)
     }
 
@@ -196,6 +239,13 @@ fun filtering(): List<GenericFunction> {
         body {
             """
             return filterNotTo(ArrayList<T>(), predicate)
+            """
+        }
+
+        returns(Strings) { "String"}
+        body(Strings) {
+            """
+            return filterNotTo(StringBuilder(), predicate).toString()
             """
         }
 
@@ -214,7 +264,7 @@ fun filtering(): List<GenericFunction> {
         inline(true)
 
         doc { "Appends all elements not matching the given *predicate* to the given *collection*" }
-        typeParam("C: MutableCollection<in T>")
+        typeParam("C: TCollection")
         returns("C")
 
         body {
@@ -223,11 +273,19 @@ fun filtering(): List<GenericFunction> {
             return collection
             """
         }
+
+        doc(Strings) { "Appends all characters not matching the given *predicate* to the given *collection*" }
+        body(Strings) {
+            """
+            for (element in this) if (!predicate(element)) collection.append(element)
+            return collection
+            """
+        }
         include(Maps)
     }
 
     templates add f("filterNotNull()") {
-        exclude(ArraysOfPrimitives)
+        exclude(ArraysOfPrimitives, Strings)
         doc { "Returns a list containing all elements that are not null" }
         typeParam("T: Any")
         returns("List<T>")
@@ -248,11 +306,11 @@ fun filtering(): List<GenericFunction> {
     }
 
     templates add f("filterNotNullTo(collection: C)") {
-        exclude(ArraysOfPrimitives)
+        exclude(ArraysOfPrimitives, Strings)
         doc { "Appends all elements that are not null to the given *collection*" }
-        typeParam("C: MutableCollection<in T>")
-        typeParam("T: Any")
         returns("C")
+        typeParam("C: TCollection")
+        typeParam("T: Any")
         toNullableT = true
         body {
             """
@@ -263,7 +321,7 @@ fun filtering(): List<GenericFunction> {
     }
 
     templates add f("slice(indices: Iterable<Int>)") {
-        only(Lists, ArraysOfPrimitives, ArraysOfObjects)
+        only(Strings, Lists, ArraysOfPrimitives, ArraysOfObjects)
         doc { "Returns a list containing elements at specified positions" }
         returns("List<T>")
         body {
@@ -273,6 +331,17 @@ fun filtering(): List<GenericFunction> {
                 list.add(get(index))
             }
             return list
+            """
+        }
+
+        returns(Strings) { "String" }
+        body(Strings) {
+            """
+            val result = StringBuilder()
+            for (i in indices) {
+                result.append(get(i))
+            }
+            return result.toString()
             """
         }
     }

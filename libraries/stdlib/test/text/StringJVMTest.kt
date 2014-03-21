@@ -226,11 +226,11 @@ class StringJVMTest {
     }
 
     test fun groupBy() {
-        // collect similar characters by their int code
-        val data = "ababaaabcd"
-        val result = data.groupBy { it.toInt() }
-        assertEquals(4, result.size)
-        assertEquals("bbb", result.get('b'.toInt()))
+        // group characters by their case
+        val data = "abAbaABcD"
+        val result = data.groupBy { it.isLowerCase() }
+        assertEquals(2, result.size)
+        assertEquals(listOf('a','b','b','a','c'), result.get(true))
     }
 
     test fun makeString() {

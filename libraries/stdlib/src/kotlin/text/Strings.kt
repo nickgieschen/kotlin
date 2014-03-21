@@ -63,3 +63,8 @@ public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
     }
     return result.toString()
 }
+
+/**
+ * Returns a substring specified by given range
+ */
+public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)

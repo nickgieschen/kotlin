@@ -45,11 +45,6 @@ public fun String.substring(beginIndex: Int): String = (this as java.lang.String
 
 public fun String.substring(beginIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(beginIndex, endIndex)
 
-/**
- * Returns a substring specified by given range
- */
-public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)
-
 public fun String.startsWith(prefix: String): Boolean = (this as java.lang.String).startsWith(prefix)
 
 public fun String.startsWith(prefix: String, toffset: Int): Boolean = (this as java.lang.String).startsWith(prefix, toffset)

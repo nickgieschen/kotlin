@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
+import com.intellij.psi.stubs.IStubElementType;
+
 public interface JetStubElementTypes {
     JetFileElementType FILE = new JetFileElementType();
 
@@ -41,4 +43,5 @@ public interface JetStubElementTypes {
     JetTypeConstraintListElementType TYPE_CONSTRAINT_LIST = new JetTypeConstraintListElementType("TYPE_CONSTRAINT_LIST");
 
     JetNullableTypeElementType NULLABLE_TYPE = new JetNullableTypeElementType("NULLABLE_TYPE");
+    JetTypeReferenceElementType TYPE_REFERENCE = new JetTypeReferenceElementType("TYPE_REFERENCE");
 }

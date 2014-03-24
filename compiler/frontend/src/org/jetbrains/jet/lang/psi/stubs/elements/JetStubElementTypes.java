@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.psi.stubs.IStubElementType;
-
 public interface JetStubElementTypes {
     JetFileElementType FILE = new JetFileElementType();
 

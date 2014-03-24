@@ -42,4 +42,5 @@ public interface JetStubElementTypes {
 
     JetNullableTypeElementType NULLABLE_TYPE = new JetNullableTypeElementType("NULLABLE_TYPE");
     JetTypeReferenceElementType TYPE_REFERENCE = new JetTypeReferenceElementType("TYPE_REFERENCE");
+    JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
 }

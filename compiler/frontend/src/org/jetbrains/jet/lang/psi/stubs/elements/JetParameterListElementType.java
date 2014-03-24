@@ -17,19 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetParameterList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterListStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetParameterListStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-import java.io.IOException;
-
-public class JetParameterListElementType extends JetStubElementType<PsiJetParameterListStub, JetParameterList> {
+public class JetParameterListElementType extends JetPlaceHolderStubElementType<JetParameterList> {
     public JetParameterListElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
@@ -40,29 +33,14 @@ public class JetParameterListElementType extends JetStubElementType<PsiJetParame
     }
 
     @Override
-    public JetParameterList createPsi(@NotNull PsiJetParameterListStub stub) {
+    public JetParameterList createPsi(@NotNull PsiJetPlaceHolderStub<JetParameterList> stub) {
         return new JetParameterList(stub);
-    }
-
-    @Override
-    public PsiJetParameterListStub createStub(@NotNull JetParameterList psi, StubElement parentStub) {
-        return new PsiJetParameterListStubImpl(parentStub);
-    }
-
-    @Override
-    public void serialize(@NotNull PsiJetParameterListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        // Nothing to serialize
     }
 
     @NotNull
     @Override
-    public PsiJetParameterListStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new PsiJetParameterListStubImpl(parentStub);
-    }
-
-    @Override
-    public void indexStub(@NotNull PsiJetParameterListStub stub, @NotNull IndexSink sink) {
-        // No index
+    protected JetPlaceHolderStubElementType<JetParameterList> getInstance() {
+        return JetStubElementTypes.VALUE_PARAMETER_LIST;
     }
 }
 

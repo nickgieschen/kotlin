@@ -17,19 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetImportList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetImportListStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetImportListStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-import java.io.IOException;
-
-public class JetImportListElementType extends JetStubElementType<PsiJetImportListStub, JetImportList> {
+public class JetImportListElementType extends JetPlaceHolderStubElementType<JetImportList> {
     public JetImportListElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
@@ -40,30 +33,13 @@ public class JetImportListElementType extends JetStubElementType<PsiJetImportLis
     }
 
     @Override
-    public JetImportList createPsi(@NotNull PsiJetImportListStub stub) {
+    public JetImportList createPsi(@NotNull PsiJetPlaceHolderStub<JetImportList> stub) {
         return new JetImportList(stub);
-    }
-
-    @Override
-    public PsiJetImportListStub createStub(
-            @NotNull JetImportList psi, StubElement parentStub
-    ) {
-        return new PsiJetImportListStubImpl(parentStub);
-    }
-
-    @Override
-    public void serialize(@NotNull PsiJetImportListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        //do nothing;
     }
 
     @NotNull
     @Override
-    public PsiJetImportListStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new PsiJetImportListStubImpl(parentStub);
-    }
-
-    @Override
-    public void indexStub(@NotNull PsiJetImportListStub stub, @NotNull IndexSink sink) {
-        //do nothing
+    protected JetPlaceHolderStubElementType<JetImportList> getInstance() {
+        return JetStubElementTypes.IMPORT_LIST;
     }
 }

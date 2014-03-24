@@ -17,19 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeConstraintList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeConstraintListStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetTypeConstraintListStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-import java.io.IOException;
-
-public class JetTypeConstraintListElementType extends JetStubElementType<PsiJetTypeConstraintListStub, JetTypeConstraintList> {
+public class JetTypeConstraintListElementType extends JetPlaceHolderStubElementType<JetTypeConstraintList> {
     public JetTypeConstraintListElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
@@ -40,36 +33,13 @@ public class JetTypeConstraintListElementType extends JetStubElementType<PsiJetT
     }
 
     @Override
-    public JetTypeConstraintList createPsi(@NotNull PsiJetTypeConstraintListStub stub) {
+    public JetTypeConstraintList createPsi(@NotNull PsiJetPlaceHolderStub<JetTypeConstraintList> stub) {
         return new JetTypeConstraintList(stub);
-    }
-
-    @Override
-    public PsiJetTypeConstraintListStub createStub(
-            @NotNull JetTypeConstraintList psi, StubElement parentStub
-    ) {
-        return new PsiJetTypeConstraintListStubImpl(parentStub);
-    }
-
-    @Override
-    public void serialize(
-            @NotNull PsiJetTypeConstraintListStub stub, @NotNull StubOutputStream dataStream
-    ) throws IOException {
-        //TODO:
     }
 
     @NotNull
     @Override
-    public PsiJetTypeConstraintListStub deserialize(
-            @NotNull StubInputStream dataStream, StubElement parentStub
-    ) throws IOException {
-        throw new UnsupportedOperationException("org.jetbrains.jet.lang.psi.stubs.elements.JetTypeConstraintListElementType#deserialize");
-    }
-
-    @Override
-    public void indexStub(
-            @NotNull PsiJetTypeConstraintListStub stub, @NotNull IndexSink sink
-    ) {
-        //do nothing
+    protected JetPlaceHolderStubElementType<JetTypeConstraintList> getInstance() {
+        return JetStubElementTypes.TYPE_CONSTRAINT_LIST;
     }
 }

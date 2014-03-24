@@ -17,19 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassBodyStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassBodyStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-import java.io.IOException;
-
-public class JetClassBodyElementType extends JetStubElementType<PsiJetClassBodyStub, JetClassBody> {
+public class JetClassBodyElementType extends JetPlaceHolderStubElementType<JetClassBody> {
     public JetClassBodyElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
@@ -40,28 +33,13 @@ public class JetClassBodyElementType extends JetStubElementType<PsiJetClassBodyS
     }
 
     @Override
-    public JetClassBody createPsi(@NotNull PsiJetClassBodyStub stub) {
+    public JetClassBody createPsi(@NotNull PsiJetPlaceHolderStub<JetClassBody> stub) {
         return new JetClassBody(stub);
-    }
-
-    @Override
-    public PsiJetClassBodyStub createStub(@NotNull JetClassBody psi, StubElement parentStub) {
-        return new PsiJetClassBodyStubImpl(parentStub);
-    }
-
-    @Override
-    public void serialize(@NotNull PsiJetClassBodyStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        //do nothing;
     }
 
     @NotNull
     @Override
-    public PsiJetClassBodyStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new PsiJetClassBodyStubImpl(parentStub);
-    }
-
-    @Override
-    public void indexStub(@NotNull PsiJetClassBodyStub stub, @NotNull IndexSink sink) {
-        //do nothing
+    protected JetPlaceHolderStubElementType<JetClassBody> getInstance() {
+        return JetStubElementTypes.CLASS_BODY;
     }
 }

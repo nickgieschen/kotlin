@@ -17,19 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetModifierList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetModifiedListStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetModifiedListStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-import java.io.IOException;
-
-public class JetModifierListElementType extends JetStubElementType<PsiJetModifiedListStub, JetModifierList> {
+public class JetModifierListElementType extends JetPlaceHolderStubElementType<JetModifierList> {
     public JetModifierListElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
@@ -40,37 +33,13 @@ public class JetModifierListElementType extends JetStubElementType<PsiJetModifie
     }
 
     @Override
-    public JetModifierList createPsi(@NotNull PsiJetModifiedListStub stub) {
+    public JetModifierList createPsi(@NotNull PsiJetPlaceHolderStub<JetModifierList> stub) {
         return new JetModifierList(stub);
     }
 
     @Override
-    public PsiJetModifiedListStub createStub(
-            @NotNull JetModifierList psi, StubElement parentStub
-    ) {
-        return new PsiJetModifiedListStubImpl(parentStub);
-    }
-
-    @Override
-    public void serialize(
-            @NotNull PsiJetModifiedListStub stub, @NotNull StubOutputStream dataStream
-    ) throws IOException {
-        //TODO:
-    }
-
     @NotNull
-    @Override
-    public PsiJetModifiedListStub deserialize(
-            @NotNull StubInputStream dataStream, StubElement parentStub
-    ) throws IOException {
-        //TODO:
-        return new PsiJetModifiedListStubImpl(parentStub);
-    }
-
-    @Override
-    public void indexStub(
-            @NotNull PsiJetModifiedListStub stub, @NotNull IndexSink sink
-    ) {
-        // do nothing
+    protected JetPlaceHolderStubElementType<JetModifierList> getInstance() {
+        return JetStubElementTypes.MODIFIER_LIST;
     }
 }

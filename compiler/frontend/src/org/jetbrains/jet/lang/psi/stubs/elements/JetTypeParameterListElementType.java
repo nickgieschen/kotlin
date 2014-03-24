@@ -17,19 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeParameterList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterListStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetTypeParameterListStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-import java.io.IOException;
-
-public class JetTypeParameterListElementType extends JetStubElementType<PsiJetTypeParameterListStub, JetTypeParameterList> {
+public class JetTypeParameterListElementType extends JetPlaceHolderStubElementType<JetTypeParameterList> {
     public JetTypeParameterListElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
@@ -40,29 +33,14 @@ public class JetTypeParameterListElementType extends JetStubElementType<PsiJetTy
     }
 
     @Override
-    public JetTypeParameterList createPsi(@NotNull PsiJetTypeParameterListStub stub) {
+    public JetTypeParameterList createPsi(@NotNull PsiJetPlaceHolderStub<JetTypeParameterList> stub) {
         return new JetTypeParameterList(stub);
-    }
-
-    @Override
-    public PsiJetTypeParameterListStub createStub(@NotNull JetTypeParameterList psi, StubElement parentStub) {
-        return new PsiJetTypeParameterListStubImpl(parentStub);
-    }
-
-    @Override
-    public void serialize(@NotNull PsiJetTypeParameterListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        // Do nothing
     }
 
     @NotNull
     @Override
-    public PsiJetTypeParameterListStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new PsiJetTypeParameterListStubImpl(parentStub);
-    }
-
-    @Override
-    public void indexStub(@NotNull PsiJetTypeParameterListStub stub, @NotNull IndexSink sink) {
-        // No index
+    protected JetPlaceHolderStubElementType<JetTypeParameterList> getInstance() {
+        return JetStubElementTypes.TYPE_PARAMETER_LIST;
     }
 }
 

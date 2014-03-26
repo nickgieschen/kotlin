@@ -37,7 +37,6 @@ public class JetNullableTypeElementType extends JetPlaceHolderStubElementType<Je
         return new JetNullableType(stub);
     }
 
-
     @NotNull
     @Override
     protected JetPlaceHolderStubElementType<JetNullableType> getInstance() {

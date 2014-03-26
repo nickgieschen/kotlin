@@ -19,11 +19,11 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,8 +45,9 @@ public class JetTypeReference extends JetElementImplStub<PsiJetPlaceHolderStub<J
         return visitor.visitTypeReference(this, data);
     }
 
+    @NotNull
     public List<JetAnnotation> getAttributeAnnotations() {
-        return findChildrenByType(JetNodeTypes.ANNOTATION);
+        return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.ANNOTATION, JetAnnotation.ARRAY_FACTORY));
     }
 
     @Nullable

@@ -24,7 +24,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -82,7 +81,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     @Override
     @Nullable
     public JetParameterList getValueParameterList() {
-        return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @Override
@@ -106,6 +105,20 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     @Override
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
+        PsiJetFunctionStub stub = getStub();
+        if (stub != null) {
+            if (!stub.isExtension()) {
+                return null;
+            }
+            JetTypeReference[] typeReferences = stub.getChildrenByType(JetStubElementTypes.TYPE_REFERENCE, new JetTypeReference[] {});
+            //TODO: really?
+            return typeReferences[0];
+        }
+        return getReceiverTypeRefByPsi();
+    }
+
+    @Nullable
+    private JetTypeReference getReceiverTypeRefByPsi() {
         PsiElement child = getFirstChild();
         while (child != null) {
             IElementType tt = child.getNode().getElementType();
@@ -122,6 +135,22 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     @Override
     @Nullable
     public JetTypeReference getReturnTypeRef() {
+        PsiJetFunctionStub stub = getStub();
+        if (stub != null) {
+            //TODO: factory
+            //array factory
+            JetTypeReference[] typeReferences = stub.getChildrenByType(JetStubElementTypes.TYPE_REFERENCE, new JetTypeReference[] {});
+            int returnTypeIndex = stub.isExtension() ? 1 : 0;
+            if (typeReferences.length < returnTypeIndex + 1) {
+                return null;
+            }
+            return typeReferences[returnTypeIndex];
+        }
+        return getReturnTypeRefByPsi();
+    }
+
+    @Nullable
+    private JetTypeReference getReturnTypeRefByPsi() {
         boolean colonPassed = false;
         PsiElement child = getFirstChild();
         while (child != null) {

@@ -26,15 +26,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationStub;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetAnnotationStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationEntryStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetAnnotationEntryStubImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.IOException;
 
-public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotationStub, JetAnnotationEntry> {
+public class JetAnnotationEntryElementType extends JetStubElementType<PsiJetAnnotationEntryStub, JetAnnotationEntry> {
 
-    public JetAnnotationElementType(@NotNull @NonNls String debugName) {
+    public JetAnnotationEntryElementType(@NotNull @NonNls String debugName) {
         super(debugName);
     }
 
@@ -44,31 +44,31 @@ public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotatio
     }
 
     @Override
-    public JetAnnotationEntry createPsi(@NotNull PsiJetAnnotationStub stub) {
+    public JetAnnotationEntry createPsi(@NotNull PsiJetAnnotationEntryStub stub) {
         return new JetAnnotationEntry(stub);
     }
 
     @Override
-    public PsiJetAnnotationStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
+    public PsiJetAnnotationEntryStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
         Name shortName = JetPsiUtil.getShortName(psi);
         String resultName = shortName != null ? shortName.asString() : psi.getText();
-        return new PsiJetAnnotationStubImpl(parentStub, resultName);
+        return new PsiJetAnnotationEntryStubImpl(parentStub, resultName);
     }
 
     @Override
-    public void serialize(@NotNull PsiJetAnnotationStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull PsiJetAnnotationEntryStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getShortName());
     }
 
     @NotNull
     @Override
-    public PsiJetAnnotationStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public PsiJetAnnotationEntryStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
-        return new PsiJetAnnotationStubImpl(parentStub, text);
+        return new PsiJetAnnotationEntryStubImpl(parentStub, text);
     }
 
     @Override
-    public void indexStub(@NotNull PsiJetAnnotationStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull PsiJetAnnotationEntryStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexAnnotation(stub, sink);
     }
 }

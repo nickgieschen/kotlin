@@ -24,7 +24,6 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -43,7 +42,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
 
         @Override
-        public ClassReader readerForInnerClass(Object o) {
+        public void accept(Object innerClass, StubBuildingVisitor<Object> visitor) {
             throw new UnsupportedOperationException("Shall not be called!");
         }
     };

@@ -355,7 +355,7 @@ public class DeclarationsChecker {
         else {
             assert member instanceof JetFunction;
             JetFunction function = (JetFunction) member;
-            hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
+            hasDeferredType = function.getReturnTypeRef() == null && function.hasBody() && !function.hasBlockBody();
         }
         if ((memberDescriptor.getVisibility().isPublicAPI()) && memberDescriptor.getOverriddenDescriptors().size() == 0 && hasDeferredType) {
             trace.report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
@@ -397,10 +397,10 @@ public class DeclarationsChecker {
             if (delegate != null) {
                 trace.report(ABSTRACT_DELEGATED_PROPERTY.on(delegate));
             }
-            if (getter != null && getter.getBodyExpression() != null) {
+            if (getter != null && getter.hasBody()) {
                 trace.report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter));
             }
-            if (setter != null && setter.getBodyExpression() != null) {
+            if (setter != null && setter.hasBody()) {
                 trace.report(ABSTRACT_PROPERTY_WITH_SETTER.on(setter));
             }
         }
@@ -412,8 +412,8 @@ public class DeclarationsChecker {
     ) {
         JetPropertyAccessor getter = property.getGetter();
         JetPropertyAccessor setter = property.getSetter();
-        boolean hasAccessorImplementation = (getter != null && getter.getBodyExpression() != null) ||
-                                            (setter != null && setter.getBodyExpression() != null);
+        boolean hasAccessorImplementation = (getter != null && getter.hasBody()) ||
+                                            (setter != null && setter.hasBody());
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             if (property.getDelegateExpressionOrInitializer() == null && property.getTypeRef() == null) {
@@ -479,7 +479,7 @@ public class DeclarationsChecker {
             if (hasAbstractModifier && inTrait) {
                 trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
             }
-            boolean hasBody = function.getBodyExpression() != null;
+            boolean hasBody = function.hasBody();
             if (hasBody && hasAbstractModifier) {
                 trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
@@ -492,7 +492,7 @@ public class DeclarationsChecker {
             return;
         }
         modifiersChecker.checkIllegalModalityModifiers(function);
-        if (function.getBodyExpression() == null && !hasAbstractModifier) {
+        if (!function.hasBody() && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
     }

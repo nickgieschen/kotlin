@@ -104,8 +104,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
-        JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
-        if (bodyExpression == null) return null;
+        if (!expression.getFunctionLiteral().hasBody()) return null;
 
         Name callerName = getCallerName(expression);
         if (callerName != null) {

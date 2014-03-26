@@ -262,8 +262,8 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor propertyDescriptor, @Nullable JetPropertyAccessor getter) {
-        boolean defaultGetter = getter == null || getter.getBodyExpression() == null;
-
+        boolean defaultGetter = getter == null || !getter.hasBody();
+        
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
         //if (!defaultGetter || isExternallyAccessible(propertyDescriptor)) {
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
@@ -292,8 +292,8 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateSetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor propertyDescriptor, @Nullable JetPropertyAccessor setter) {
-        boolean defaultSetter = setter == null || setter.getBodyExpression() == null;
-
+        boolean defaultSetter = setter == null || !setter.hasBody();
+ 
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
         if (/*!defaultSetter || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
             PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();

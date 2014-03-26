@@ -331,8 +331,7 @@ public class DescriptorResolver {
             returnType = KotlinBuiltIns.getInstance().getUnitType();
         }
         else {
-            JetExpression bodyExpression = function.getBodyExpression();
-            if (bodyExpression != null) {
+            if (function.hasBody()) {
                 returnType =
                         DeferredType.createRecursionIntolerant(
                                 storageManager,
@@ -350,8 +349,7 @@ public class DescriptorResolver {
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }
-        boolean hasBody = function.getBodyExpression() != null;
-        Modality modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, hasBody));
+        Modality modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, function.hasBody()));
         Visibility visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor));
         functionDescriptor.initialize(
                 receiverType,
@@ -945,11 +943,11 @@ public class DescriptorResolver {
         boolean hasBody = property.getDelegateExpressionOrInitializer() != null;
         if (!hasBody) {
             JetPropertyAccessor getter = property.getGetter();
-            if (getter != null && getter.getBodyExpression() != null) {
+            if (getter != null && getter.hasBody()) {
                 hasBody = true;
             }
             JetPropertyAccessor setter = property.getSetter();
-            if (!hasBody && setter != null && setter.getBodyExpression() != null) {
+            if (!hasBody && setter != null && setter.hasBody()) {
                 hasBody = true;
             }
         }
@@ -1130,7 +1128,7 @@ public class DescriptorResolver {
             setterDescriptor = new PropertySetterDescriptorImpl(propertyDescriptor, annotations,
                                                                 resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
                                                                 resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
-                                                                setter.getBodyExpression() != null, false,
+                                                                setter.hasBody(), false,
                                                                 CallableMemberDescriptor.Kind.DECLARATION, null);
             if (parameter != null) {
 
@@ -1207,7 +1205,7 @@ public class DescriptorResolver {
             getterDescriptor = new PropertyGetterDescriptorImpl(propertyDescriptor, annotations,
                                                                 resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
                                                                 resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
-                                                                getter.getBodyExpression() != null, false,
+                                                                getter.hasBody(), false,
                                                                 CallableMemberDescriptor.Kind.DECLARATION, null);
             getterDescriptor.initialize(returnType);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);

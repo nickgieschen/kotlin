@@ -16,25 +16,13 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeConstraintList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
 public class JetTypeConstraintListElementType extends JetPlaceHolderStubElementType<JetTypeConstraintList> {
     public JetTypeConstraintListElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
-    }
-
-    @Override
-    public JetTypeConstraintList createPsiFromAst(@NotNull ASTNode node) {
-        return new JetTypeConstraintList(node);
-    }
-
-    @Override
-    public JetTypeConstraintList createPsi(@NotNull PsiJetPlaceHolderStub<JetTypeConstraintList> stub) {
-        return new JetTypeConstraintList(stub);
+        super(debugName, JetTypeConstraintList.class);
     }
 
     @NotNull

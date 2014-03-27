@@ -25,9 +25,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetParameterStubImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -52,7 +50,8 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     @Override
     public PsiJetParameterStub createStub(@NotNull JetParameter psi, StubElement parentStub) {
         return new PsiJetParameterStubImpl(parentStub, psi.getFqName(), StringRef.fromString(psi.getName()),
-                                           psi.isMutable(), psi.isVarArg(), psi.getValOrVarNode() != null);
+                                           psi.isMutable(), psi.isVarArg(), psi.getValOrVarNode() != null,
+                                           psi.getDefaultValue() != null);
     }
 
     @Override
@@ -70,6 +69,7 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         dataStream.writeBoolean(stub.isMutable());
         dataStream.writeBoolean(stub.isVarArg());
         dataStream.writeBoolean(stub.hasValOrValNode());
+        dataStream.writeBoolean(stub.hasDefaultValue());
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);
     }
@@ -81,10 +81,11 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         boolean isMutable = dataStream.readBoolean();
         boolean isVarArg = dataStream.readBoolean();
         boolean hasValOrValNode = dataStream.readBoolean();
+        boolean hasDefaultValue = dataStream.readBoolean();
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-         return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, isVarArg, hasValOrValNode);
+         return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, isVarArg, hasValOrValNode, hasDefaultValue);
     }
 
     @Override

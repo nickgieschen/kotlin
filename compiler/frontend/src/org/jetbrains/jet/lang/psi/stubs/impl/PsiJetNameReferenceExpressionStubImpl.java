@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNameReferenceExpression;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetNameReferenceExpressionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class PsiJetNameReferenceExpressionStubImpl extends StubBase<JetNameReferenceExpression> implements PsiJetNameReferenceExpressionStub {
     public PsiJetNameReferenceExpressionStubImpl(StubElement parent) {
@@ -31,7 +30,7 @@ public class PsiJetNameReferenceExpressionStubImpl extends StubBase<JetNameRefer
 
     @NotNull
     @Override
-    public Name getReferencedName() {
+    public String getReferencedName() {
         throw new UnsupportedOperationException(
                 "org.jetbrains.jet.lang.psi.stubs.impl.PsiJetNameReferenceExpressionStubImpl#getReferencedName");
     }

@@ -23,5 +23,5 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface PsiJetNameReferenceExpressionStub extends StubElement<JetNameReferenceExpression> {
     @NotNull
-    Name getReferencedName();
+    String getReferencedName();
 }

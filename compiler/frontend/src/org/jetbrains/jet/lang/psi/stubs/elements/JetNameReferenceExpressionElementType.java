@@ -21,6 +21,7 @@ import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNameReferenceExpression;
@@ -46,18 +47,19 @@ public class JetNameReferenceExpressionElementType extends JetStubElementType<Ps
 
     @Override
     public PsiJetNameReferenceExpressionStub createStub(@NotNull JetNameReferenceExpression psi, StubElement parentStub) {
-        return new PsiJetNameReferenceExpressionStubImpl(parentStub);
+        return new PsiJetNameReferenceExpressionStubImpl(parentStub, StringRef.fromNullableString(psi.getReferencedName()));
     }
 
     @Override
     public void serialize(@NotNull PsiJetNameReferenceExpressionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        //TODO:
+        dataStream.writeName(stub.getReferencedName());
     }
 
     @NotNull
     @Override
     public PsiJetNameReferenceExpressionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new PsiJetNameReferenceExpressionStubImpl(parentStub);
+        StringRef referencedName = dataStream.readName();
+        return new PsiJetNameReferenceExpressionStubImpl(parentStub, referencedName);
     }
 
     @Override

@@ -18,20 +18,24 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNameReferenceExpression;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetNameReferenceExpressionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class PsiJetNameReferenceExpressionStubImpl extends StubBase<JetNameReferenceExpression> implements PsiJetNameReferenceExpressionStub {
-    public PsiJetNameReferenceExpressionStubImpl(StubElement parent) {
+    @NotNull
+    private final StringRef referencedName;
+
+    public PsiJetNameReferenceExpressionStubImpl(StubElement parent, @NotNull StringRef referencedName) {
         super(parent, JetStubElementTypes.REFERENCE_EXPRESSION);
+        this.referencedName = referencedName;
     }
 
     @NotNull
     @Override
     public String getReferencedName() {
-        throw new UnsupportedOperationException(
-                "org.jetbrains.jet.lang.psi.stubs.impl.PsiJetNameReferenceExpressionStubImpl#getReferencedName");
+        return referencedName.getString();
     }
 }

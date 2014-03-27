@@ -20,16 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.List;
-
 public interface ScriptDescriptor extends Annotated, DeclarationDescriptor, DeclarationDescriptorNonRoot {
     String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
     Name NAME = Name.special("<script>");
 
     int getPriority();
-
-    @NotNull
-    List<ValueParameterDescriptor> getValueParameters();
 
     @NotNull
     FunctionDescriptor getScriptCodeDescriptor();

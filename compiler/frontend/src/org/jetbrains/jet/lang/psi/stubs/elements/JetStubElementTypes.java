@@ -48,4 +48,6 @@ public interface JetStubElementTypes {
     JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
 
     JetNameReferenceExpressionElementType REFERENCE_EXPRESSION = new JetNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
+
+    JetTypeArgumentListElementType TYPE_ARGUMENT_LIST = new JetTypeArgumentListElementType("TYPE_ARGUMENT_LIST");
 }

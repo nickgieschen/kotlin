@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetParameter;
 
 public interface PsiJetParameterStub extends PsiJetStubWithFqName<JetParameter> {

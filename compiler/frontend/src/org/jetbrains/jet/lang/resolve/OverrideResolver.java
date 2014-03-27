@@ -24,13 +24,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -151,9 +150,10 @@ public class OverrideResolver {
 
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration declaration = (JetDeclaration) BindingContextUtils
-                                    .descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
-                            trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
+                            JetDeclaration declaration =
+                                    (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
+                            //noinspection ConstantConditions
+                            trace.report(CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()));
                         }
                     });
         }
@@ -239,38 +239,24 @@ public class OverrideResolver {
         }
         if (nameIdentifier == null) return;
 
-        for (CallableMemberDescriptor memberDescriptor : manyImpl) {
-            trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
-            break;
+        if (!manyImpl.isEmpty()) {
+            trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, manyImpl.iterator().next()));
         }
 
-
-        if (classDescriptor.getModality() == Modality.ABSTRACT) {
-            return;
-        }
-
-        for (CallableMemberDescriptor memberDescriptor : abstractNoImpl) {
-            trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
-            break;
+        if (classDescriptor.getModality() != Modality.ABSTRACT && !abstractNoImpl.isEmpty()) {
+            trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, abstractNoImpl.iterator().next()));
         }
     }
 
     public static void collectMissingImplementations(
-            MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull Set<CallableMemberDescriptor> abstractNoImpl,
+            @NotNull Set<CallableMemberDescriptor> manyImpl
     ) {
-        for (CallableMemberDescriptor descriptor : classDescriptor.getAllCallableMembers()) {
-            collectMissingImplementations(descriptor, abstractNoImpl, manyImpl);
-        }
-    }
-
-    public static void collectMissingImplementations(
-            ClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl
-    ) {
-        Iterator<CallableMemberDescriptor> callableMembers = KotlinPackage.filterIsInstance(
-                classDescriptor.getDefaultType().getMemberScope().getAllDescriptors().iterator(), CallableMemberDescriptor.class
-        );
-        while (callableMembers.hasNext()) {
-            collectMissingImplementations(callableMembers.next(), abstractNoImpl, manyImpl);
+        for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (member instanceof CallableMemberDescriptor) {
+                collectMissingImplementations((CallableMemberDescriptor) member, abstractNoImpl, manyImpl);
+            }
         }
     }
 
@@ -399,14 +385,9 @@ public class OverrideResolver {
     ) {
         Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = Maps.newLinkedHashMap();
         for (CallableMemberDescriptor descriptor : directOverriddenDescriptors) {
-            Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
-            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOutOverridden(
-                    Sets.newLinkedHashSet(overriddenDeclarations));
-            Set<CallableMemberDescriptor> overridden = Sets.newLinkedHashSet();
-            for (CallableMemberDescriptor memberDescriptor : filteredOverrides) {
-                overridden.add(memberDescriptor);
-            }
-            overriddenDeclarationsByDirectParent.put(descriptor, overridden);
+            Set<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
+            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOutOverridden(overriddenDeclarations);
+            overriddenDeclarationsByDirectParent.put(descriptor, new LinkedHashSet<CallableMemberDescriptor>(filteredOverrides));
         }
         return overriddenDeclarationsByDirectParent;
     }
@@ -502,7 +483,7 @@ public class OverrideResolver {
         }
     }
 
-    private void checkOverridesForMemberMarkedOverride(
+    private static void checkOverridesForMemberMarkedOverride(
             @NotNull CallableMemberDescriptor declared,
             boolean checkIfOverridesNothing,
             @NotNull CheckOverrideReportStrategy reportError
@@ -600,24 +581,27 @@ public class OverrideResolver {
                                               annotation);
     }
 
-    private CallableMemberDescriptor findInvisibleOverriddenDescriptor(CallableMemberDescriptor declared, ClassDescriptor declaringClass) {
-        CallableMemberDescriptor invisibleOverride = null;
-        outer:
+    @Nullable
+    private static CallableMemberDescriptor findInvisibleOverriddenDescriptor(
+            @NotNull CallableMemberDescriptor declared,
+            @NotNull ClassDescriptor declaringClass
+    ) {
         for (JetType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
             Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
             all.addAll(supertype.getMemberScope().getFunctions(declared.getName()));
+            //noinspection unchecked
             all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName()));
             for (CallableMemberDescriptor fromSuper : all) {
                 if (OverridingUtil.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
-                    invisibleOverride = fromSuper;
                     if (Visibilities.isVisible(fromSuper, declared)) {
-                        throw new IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared + " and visible but does not appear in its getOverriddenDescriptors()");
+                        throw new IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared +
+                                                        " and visible but does not appear in its getOverriddenDescriptors()");
                     }
-                    break outer;
+                    return fromSuper;
                 }
             }
         }
-        return invisibleOverride;
+        return null;
     }
 
     private void checkParameterOverridesForAllClasses(@NotNull TopDownAnalysisContext c) {
@@ -631,12 +615,12 @@ public class OverrideResolver {
     }
 
     private void checkOverridesForParameters(@NotNull CallableMemberDescriptor declared) {
-        boolean noDeclaration = declared.getKind() != CallableMemberDescriptor.Kind.DECLARATION;
-        if (!noDeclaration) {
+        boolean isDeclaration = declared.getKind() == CallableMemberDescriptor.Kind.DECLARATION;
+        if (isDeclaration) {
             // No check if the function is not marked as 'override'
             JetModifierListOwner declaration =
                     (JetModifierListOwner) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
-            if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+            if (declaration != null && !declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
                 return;
             }
         }
@@ -647,55 +631,67 @@ public class OverrideResolver {
         //  a) p1 is not allowed to have a default value declared
         //  b) p1 must have the same name as p2
         for (ValueParameterDescriptor parameterFromSubclass : declared.getValueParameters()) {
-            JetParameter parameter =
-                    noDeclaration ? null :
-                            (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
-
-            JetClassOrObject classElement = noDeclaration ? (JetClassOrObject) BindingContextUtils
-                    .descriptorToDeclaration(trace.getBindingContext(), declared.getContainingDeclaration()) : null;
-
-            if (parameterFromSubclass.declaresDefaultValue() && !noDeclaration) {
-                trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
-            }
-
-            boolean superWithDefault = false;
+            int defaultsInSuper = 0;
             for (ValueParameterDescriptor parameterFromSuperclass : parameterFromSubclass.getOverriddenDescriptors()) {
                 if (parameterFromSuperclass.declaresDefaultValue()) {
-                    if (!superWithDefault) {
-                        superWithDefault = true;
-                    }
-                    else {
-                        if (noDeclaration) {
-                            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, parameterFromSubclass));
-                        }
-                        else {
-                            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES.on(parameter, parameterFromSubclass));
-                        }
-                        break;
-                    }
+                    defaultsInSuper++;
+                }
+            }
+            boolean multipleDefaultsInSuper = defaultsInSuper > 1;
+
+            if (isDeclaration) {
+                JetParameter parameter = (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
+                assert parameter != null : "Declaration not found for parameter: " + parameterFromSubclass;
+
+                if (parameterFromSubclass.declaresDefaultValue()) {
+                    trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
                 }
 
-                DeclarationDescriptor superFunction = parameterFromSuperclass.getContainingDeclaration();
-                if (declared.hasStableParameterNames() &&
-                    superFunction instanceof CallableDescriptor && ((CallableDescriptor) superFunction).hasStableParameterNames() &&
-                    !parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
-                    if (noDeclaration) {
-                        trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(classElement, declared.getOverriddenDescriptors(), parameterFromSuperclass.getIndex() + 1));
+                if (multipleDefaultsInSuper) {
+                    trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES.on(parameter, parameterFromSubclass));
+                }
+
+                for (ValueParameterDescriptor parameterFromSuperclass : parameterFromSubclass.getOverriddenDescriptors()) {
+                    if (shouldReportParameterNameOverrideWarning(parameterFromSubclass, parameterFromSuperclass)) {
+                        //noinspection ConstantConditions
+                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(
+                                parameter,
+                                (ClassDescriptor) parameterFromSuperclass.getContainingDeclaration().getContainingDeclaration(),
+                                parameterFromSuperclass)
+                        );
                     }
-                    else {
-                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(parameter, (ClassDescriptor) superFunction.getContainingDeclaration(), parameterFromSuperclass));
+                }
+            }
+            else {
+                JetClassOrObject classElement = (JetClassOrObject) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared.getContainingDeclaration());
+                assert classElement != null : "Declaration not found for class: " + declared.getContainingDeclaration();
+
+                if (multipleDefaultsInSuper) {
+                    trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, parameterFromSubclass));
+                }
+
+                for (ValueParameterDescriptor parameterFromSuperclass : parameterFromSubclass.getOverriddenDescriptors()) {
+                    if (shouldReportParameterNameOverrideWarning(parameterFromSubclass, parameterFromSuperclass)) {
+                        trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(classElement, declared.getOverriddenDescriptors(), parameterFromSuperclass.getIndex() + 1));
                     }
                 }
             }
         }
     }
 
-    private boolean checkPropertyKind(CallableMemberDescriptor descriptor, boolean isVar) {
-        if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            return propertyDescriptor.isVar() == isVar;
-        }
-        return false;
+    private static boolean shouldReportParameterNameOverrideWarning(
+            @NotNull ValueParameterDescriptor parameterFromSubclass,
+            @NotNull ValueParameterDescriptor parameterFromSuperclass
+    ) {
+        DeclarationDescriptor subFunction = parameterFromSubclass.getContainingDeclaration();
+        DeclarationDescriptor superFunction = parameterFromSuperclass.getContainingDeclaration();
+        return subFunction instanceof CallableDescriptor && ((CallableDescriptor) subFunction).hasStableParameterNames() &&
+               superFunction instanceof CallableDescriptor && ((CallableDescriptor) superFunction).hasStableParameterNames() &&
+               !parameterFromSuperclass.getName().equals(parameterFromSubclass.getName());
+    }
+
+    private static boolean checkPropertyKind(@NotNull CallableMemberDescriptor descriptor, boolean isVar) {
+        return descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isVar() == isVar;
     }
 
     private void checkVisibility(@NotNull TopDownAnalysisContext c) {

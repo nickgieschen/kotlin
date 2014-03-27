@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
@@ -1810,7 +1809,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
      * second is member of trait that contain implementation.
      */
     private List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
-        List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> r = Lists.newArrayList();
+        List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> result = Lists.newArrayList();
 
         for (DeclarationDescriptor decl : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (!(decl instanceof CallableMemberDescriptor)) {
@@ -1826,18 +1825,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 continue;
             }
 
-            Collection<CallableMemberDescriptor> overriddenDeclarations =
-                    OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
+            Set<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
 
-            Collection<CallableMemberDescriptor> filteredOverriddenDeclarations =
-                    OverridingUtil.filterOutOverridden(Sets.newLinkedHashSet(overriddenDeclarations));
+            Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOutOverridden(overriddenDeclarations);
 
             int count = 0;
             CallableMemberDescriptor candidate = null;
 
             for (CallableMemberDescriptor overriddenDeclaration : filteredOverriddenDeclarations) {
-                if (isTrait(overriddenDeclaration.getContainingDeclaration()) &&
-                    overriddenDeclaration.getModality() != Modality.ABSTRACT) {
+                if (isTrait(overriddenDeclaration.getContainingDeclaration()) && overriddenDeclaration.getModality() != Modality.ABSTRACT) {
                     candidate = overriddenDeclaration;
                     count++;
                 }
@@ -1848,7 +1844,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             assert count == 1 : "Ambiguous overridden declaration: " + callableMemberDescriptor.getName();
 
-
             Collection<JetType> superTypesOfSuperClass =
                     superClassType != null ? TypeUtils.getAllSupertypes(superClassType) : Collections.<JetType>emptySet();
             ReceiverParameterDescriptor expectedThisObject = candidate.getExpectedThisObject();
@@ -1857,10 +1852,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             boolean implementedInSuperClass = superTypesOfSuperClass.contains(candidateType);
 
             if (!implementedInSuperClass) {
-                r.add(Pair.create(callableMemberDescriptor, candidate));
+                result.add(Pair.create(callableMemberDescriptor, candidate));
             }
         }
-        return r;
+        return result;
     }
 
     public void addClassObjectPropertyToCopy(PropertyDescriptor descriptor, Object defaultValue) {

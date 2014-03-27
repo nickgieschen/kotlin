@@ -46,20 +46,19 @@ public class JetUserTypeElementType extends JetStubElementType<PsiJetUserTypeStu
 
     @Override
     public PsiJetUserTypeStub createStub(@NotNull JetUserType psi, StubElement parentStub) {
-        //TODO:
-        return new PsiJetUserTypeStubImpl(parentStub);
+        return new PsiJetUserTypeStubImpl(parentStub, psi.isAbsoluteInRootPackage());
     }
 
     @Override
     public void serialize(@NotNull PsiJetUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        //TODO:
+        dataStream.writeBoolean(stub.isAbsoluteInRootPackage());
     }
 
     @NotNull
     @Override
     public PsiJetUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        //tODO:
-        return new PsiJetUserTypeStubImpl(parentStub);
+        boolean isAbsoluteInRootPackage = dataStream.readBoolean();
+        return new PsiJetUserTypeStubImpl(parentStub, isAbsoluteInRootPackage);
     }
 
     @Override

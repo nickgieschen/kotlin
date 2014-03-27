@@ -22,6 +22,5 @@ import org.jetbrains.jet.lang.psi.JetUserType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface PsiJetUserTypeStub extends StubElement<JetUserType> {
-    @NotNull
-    Name getReferencedName();
+    boolean isAbsoluteInRootPackage();
 }

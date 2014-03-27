@@ -25,13 +25,15 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class PsiJetUserTypeStubImpl extends StubBase<JetUserType> implements PsiJetUserTypeStub {
-    public PsiJetUserTypeStubImpl(StubElement parent) {
+    private final boolean isAbsoluteInRootPackage;
+
+    public PsiJetUserTypeStubImpl(StubElement parent, boolean isAbsoluteInRootPackage) {
         super(parent, JetStubElementTypes.USER_TYPE);
+        this.isAbsoluteInRootPackage = isAbsoluteInRootPackage;
     }
 
-    @NotNull
     @Override
-    public Name getReferencedName() {
-        throw new UnsupportedOperationException("org.jetbrains.jet.lang.psi.stubs.impl.PsiJetUserTypeStubImpl#getReferencedName");
+    public boolean isAbsoluteInRootPackage() {
+        return isAbsoluteInRootPackage;
     }
 }

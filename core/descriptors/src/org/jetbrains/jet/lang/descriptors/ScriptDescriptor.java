@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
-import org.jetbrains.jet.lang.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -37,7 +36,7 @@ public interface ScriptDescriptor extends Annotated, DeclarationDescriptor, Decl
     List<ValueParameterDescriptor> getValueParameters();
 
     @NotNull
-    ScriptCodeDescriptor getScriptCodeDescriptor();
+    FunctionDescriptor getScriptCodeDescriptor();
 
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();

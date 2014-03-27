@@ -52,6 +52,7 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
     private final ClassDescriptorImpl classDescriptor;
 
     private final WritableScopeImpl classScope;
+    private WritableScopeImpl scopeForBodyResolution;
 
     public ScriptDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -174,5 +175,16 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
     @NotNull
     public ClassDescriptor getClassDescriptor() {
         return classDescriptor;
+    }
+
+    @Override
+    @NotNull
+    public WritableScopeImpl getScopeForBodyResolution() {
+        return scopeForBodyResolution;
+    }
+
+    public void setScopeForBodyResolution(@NotNull WritableScopeImpl scopeForBodyResolution) {
+        assert this.scopeForBodyResolution == null : "Scope for body resolution already set for " + this;
+        this.scopeForBodyResolution = scopeForBodyResolution;
     }
 }

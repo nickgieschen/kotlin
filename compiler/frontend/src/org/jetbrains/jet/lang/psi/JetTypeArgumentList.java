@@ -31,7 +31,7 @@ public class JetTypeArgumentList extends JetElementImplStub<PsiJetPlaceHolderStu
         super(node);
     }
 
-    public JetTypeArgumentList(@NotNull PsiJetPlaceHolderStub<JetTypeArgumentList> stub, @NotNull IStubElementType nodeType) {
+    public JetTypeArgumentList(@NotNull PsiJetPlaceHolderStub<JetTypeArgumentList> stub) {
         super(stub, JetStubElementTypes.TYPE_ARGUMENT_LIST);
     }
 

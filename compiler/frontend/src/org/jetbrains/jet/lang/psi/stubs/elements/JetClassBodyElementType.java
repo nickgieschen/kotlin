@@ -16,25 +16,13 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
 public class JetClassBodyElementType extends JetPlaceHolderStubElementType<JetClassBody> {
     public JetClassBodyElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
-    }
-
-    @Override
-    public JetClassBody createPsiFromAst(@NotNull ASTNode node) {
-        return new JetClassBody(node);
-    }
-
-    @Override
-    public JetClassBody createPsi(@NotNull PsiJetPlaceHolderStub<JetClassBody> stub) {
-        return new JetClassBody(stub);
+        super(debugName, JetClassBody.class);
     }
 
     @NotNull

@@ -57,7 +57,8 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         return new PsiJetParameterStubImpl(parentStub, psi.getFqName(),
                 psi.getName(), psi.isMutable(), psi.isVarArg(),
                 typeReference != null ? typeReference.getText() : null,
-                defaultValue != null ? defaultValue.getText() : null);
+                defaultValue != null ? defaultValue.getText() : null,
+                psi.getValOrVarNode() != null);
     }
 
     @Override
@@ -74,6 +75,7 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());
         dataStream.writeBoolean(stub.isVarArg());
+        dataStream.writeBoolean(stub.hasValOrValNode());
         dataStream.writeName(stub.getTypeText());
         dataStream.writeName(stub.getDefaultValueText());
         FqName name = stub.getFqName();
@@ -86,13 +88,14 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         StringRef name = dataStream.readName();
         boolean isMutable = dataStream.readBoolean();
         boolean isVarArg = dataStream.readBoolean();
+        boolean hasValOrValNode = dataStream.readBoolean();
         StringRef typeText = dataStream.readName();
         StringRef defaultValueText = dataStream.readName();
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
          return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, isVarArg,
-                                           typeText, defaultValueText);
+                                           typeText, defaultValueText, hasValOrValNode);
     }
 
     @Override

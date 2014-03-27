@@ -16,25 +16,13 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeParameterList;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
 public class JetTypeParameterListElementType extends JetPlaceHolderStubElementType<JetTypeParameterList> {
     public JetTypeParameterListElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
-    }
-
-    @Override
-    public JetTypeParameterList createPsiFromAst(@NotNull ASTNode node) {
-        return new JetTypeParameterList(node);
-    }
-
-    @Override
-    public JetTypeParameterList createPsi(@NotNull PsiJetPlaceHolderStub<JetTypeParameterList> stub) {
-        return new JetTypeParameterList(stub);
+        super(debugName, JetTypeParameterList.class);
     }
 
     @NotNull

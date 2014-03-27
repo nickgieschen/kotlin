@@ -22,9 +22,5 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 public interface PsiJetParameterStub extends PsiJetStubWithFqName<JetParameter> {
     boolean isMutable();
     boolean isVarArg();
-    @Nullable
-    String getTypeText();
-    @Nullable
-    String getDefaultValueText();
     boolean hasValOrValNode();
 }

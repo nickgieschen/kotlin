@@ -16,25 +16,13 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNullableType;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
 public class JetNullableTypeElementType extends JetPlaceHolderStubElementType<JetNullableType> {
     public JetNullableTypeElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
-    }
-
-    @Override
-    public JetNullableType createPsiFromAst(@NotNull ASTNode node) {
-        return new JetNullableType(node);
-    }
-
-    @Override
-    public JetNullableType createPsi(@NotNull PsiJetPlaceHolderStub<JetNullableType> stub) {
-        return new JetNullableType(stub);
+        super(debugName, JetNullableType.class);
     }
 
     @NotNull

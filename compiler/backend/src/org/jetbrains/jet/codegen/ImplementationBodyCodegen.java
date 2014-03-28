@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -682,7 +682,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return true;
         }
 
-        for (CallableDescriptor overridden : OverridingUtil.getOverriddenDeclarations(function)) {
+        for (CallableDescriptor overridden : OverrideResolver.getOverriddenDeclarations(function)) {
             if (overridden instanceof CallableMemberDescriptor
                 && ((CallableMemberDescriptor) overridden).getKind() == CallableMemberDescriptor.Kind.DECLARATION
                 && !overridden.getContainingDeclaration().equals(KotlinBuiltIns.getInstance().getAny())) {
@@ -1825,9 +1825,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 continue;
             }
 
-            Set<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
+            Set<CallableMemberDescriptor> overriddenDeclarations = OverrideResolver.getOverriddenDeclarations(callableMemberDescriptor);
 
-            Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOutOverridden(overriddenDeclarations);
+            Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverrideResolver.filterOutOverridden(overriddenDeclarations);
 
             int count = 0;
             CallableMemberDescriptor candidate = null;

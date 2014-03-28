@@ -25,7 +25,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import java.util.*
@@ -36,6 +35,7 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import com.intellij.CommonBundle
 import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.jet.lang.resolve.OverrideResolver
 
 public trait JetChangeSignatureConfiguration {
     fun configure(changeSignatureData: JetChangeSignatureData, bindingContext: BindingContext)
@@ -119,7 +119,7 @@ public class JetChangeSignature(val project: Project,
             return Collections.singleton(functionDescriptor)
         }
 
-        return OverridingUtil.filterOutOverriding(overriddenDeclarations)
+        return OverrideResolver.filterOutOverriding(overriddenDeclarations)
     }
 
     private fun showChangeSignatureDialog(descriptorsForSignatureChange: Collection<FunctionDescriptor>) {

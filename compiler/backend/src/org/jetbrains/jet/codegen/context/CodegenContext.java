@@ -145,7 +145,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             }
             closure.setCaptureThis();
         }
-        return prefix != null ? StackValue.composedOrStatic(prefix, lazyOuterExpression.invoke()) : lazyOuterExpression.invoke();
+        return prefix != null ? StackValue.composed(prefix, lazyOuterExpression.invoke()) : lazyOuterExpression.invoke();
     }
 
     @NotNull
@@ -322,7 +322,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
             if (answer != null) {
                 StackValue innerValue = answer.getInnerValue();
-                return result == null ? innerValue : StackValue.composedOrStatic(result, innerValue);
+                return result == null ? innerValue : StackValue.composed(result, innerValue);
             }
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
@@ -333,13 +333,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                         break;
                     }
                     else {
-                        return result == null ? innerValue : StackValue.composedOrStatic(result, innerValue);
+                        return result == null ? innerValue : composedOrStatic(result, innerValue);
                     }
                 }
             }
 
             myOuter = getOuterExpression(null, ignoreNoOuter, false);
-            result = result == null || myOuter == null ? myOuter : StackValue.composedOrStatic(result, myOuter);
+            result = result == null || myOuter == null ? myOuter : StackValue.composed(result, myOuter);
         }
 
         StackValue resultValue;
@@ -349,7 +349,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
         }
 
-        if (myOuter != null && resultValue != null) {
+        if (myOuter != null && resultValue != null && !isStaticField(resultValue)) {
             closure.setCaptureThis();
         }
         return resultValue;
@@ -463,5 +463,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @Nullable
     public CodegenContext findChildContext(@NotNull DeclarationDescriptor child) {
         return childContexts == null ? null : childContexts.get(child);
+    }
+
+    public static StackValue composedOrStatic(StackValue prefix, StackValue suffix) {
+        if (isStaticField(suffix)) {
+            return suffix;
+        }
+        return StackValue.composed(prefix, suffix);
+    }
+
+    private static boolean isStaticField(StackValue value) {
+        return value instanceof StackValue.Field && ((StackValue.Field) value).isStatic;
     }
 }

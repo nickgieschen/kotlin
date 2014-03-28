@@ -304,7 +304,7 @@ public abstract class StackValue {
         return new FieldForSharedVar(localType, classType, fieldName);
     }
 
-    public static StackValue composedOrStatic(StackValue prefix, StackValue suffix) {
+    public static StackValue composed(StackValue prefix, StackValue suffix) {
         if (suffix instanceof Field && ((Field) suffix).isStatic) {
             return suffix;
         }
@@ -1198,7 +1198,7 @@ public abstract class StackValue {
 
     public abstract static class StackValueWithSimpleReceiver extends StackValue {
 
-        protected final boolean isStatic;
+        public final boolean isStatic;
 
         public StackValueWithSimpleReceiver(@NotNull Type type, boolean isStatic) {
             super(type);

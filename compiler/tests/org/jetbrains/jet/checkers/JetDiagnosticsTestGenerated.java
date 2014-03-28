@@ -5331,6 +5331,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/kt2052.kt");
             }
             
+            @TestMetadata("kt4763.kt")
+            public void testKt4763() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/kt4763.kt");
+            }
+            
             @TestMetadata("kt880.kt")
             public void testKt880() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/kt880.kt");

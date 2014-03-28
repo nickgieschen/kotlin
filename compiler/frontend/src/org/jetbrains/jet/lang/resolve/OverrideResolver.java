@@ -374,7 +374,7 @@ public class OverrideResolver {
         Set<CallableMemberDescriptor> relevantDirectlyOverridden =
                 getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations);
 
-        int implCount = countImplementations(relevantDirectlyOverridden);
+        int implCount = countImplementations(descriptor, relevantDirectlyOverridden);
         if (implCount == 0) {
             collectNotSynthesizedDescriptorsByModality(allFilteredOverriddenDeclarations, abstractNoImpl, Modality.ABSTRACT);
         }
@@ -383,10 +383,13 @@ public class OverrideResolver {
         }
     }
 
-    private static int countImplementations(@NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden) {
+    private static int countImplementations(
+            @NotNull CallableMemberDescriptor fakeOverride,
+            @NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden
+    ) {
         int implCount = 0;
         for (CallableMemberDescriptor overriddenDescriptor : relevantDirectlyOverridden) {
-            if (overriddenDescriptor.getModality() != Modality.ABSTRACT) {
+            if (overriddenDescriptor.getModality() != Modality.ABSTRACT && isReturnTypeOkForOverride(fakeOverride, overriddenDescriptor)) {
                 implCount++;
             }
         }

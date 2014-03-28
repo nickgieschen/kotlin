@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.CheckerTestUtil;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -146,6 +148,13 @@ public class CodegenTestFiles {
                 scriptParameterTypes.add(new AnalyzerScriptParameter(Name.identifier(name), JetTypeName.parse(type)));
                 scriptParameterValues.add(value);
             }
+
+            JetScriptDefinitionProvider.getInstance(project).addScriptDefinition(
+                    new JetScriptDefinition(
+                            ".kts",
+                            scriptParameterTypes
+                    )
+            );
         }
 
         return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterTypes, scriptParameterValues);

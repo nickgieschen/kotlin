@@ -393,8 +393,7 @@ public class TopDownAnalyzer {
                         globalContext.getExceptionTracker(),
                         Predicates.equalTo(object.getContainingFile()),
                         false,
-                        true,
-                        Collections.<AnalyzerScriptParameter>emptyList()
+                        true
                 );
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(

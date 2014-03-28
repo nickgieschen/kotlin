@@ -28,7 +28,7 @@ public trait JetQualifiedExpression : JetExpression {
     public fun getSelectorExpression(): JetExpression?
 
     public fun getOperationTokenNode(): ASTNode {
-        val operationNode = getNode().findChildByType(JetTokens.OPERATIONS)
+        val operationNode = getNode()!!.findChildByType(JetTokens.OPERATIONS)
         return operationNode!!
     }
 

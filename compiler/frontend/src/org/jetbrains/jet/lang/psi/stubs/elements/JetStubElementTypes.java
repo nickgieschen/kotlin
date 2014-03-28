@@ -52,4 +52,6 @@ public interface JetStubElementTypes {
     JetDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new JetDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
 
     JetTypeArgumentListElementType TYPE_ARGUMENT_LIST = new JetTypeArgumentListElementType("TYPE_ARGUMENT_LIST");
+
+    JetDelegationSpecifierListElementType DELEGATION_SPECIFIER_LIST = new JetDelegationSpecifierListElementType("DELEGATION_SPECIFIER_LIST");
 }

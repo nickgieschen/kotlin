@@ -131,8 +131,9 @@ public class JetParsing extends AbstractJetParsing {
 
         parsePreamble(false);
 
-        PsiBuilder.Marker scriptMarker = mark();
         parseImportDirectives();
+
+        PsiBuilder.Marker scriptMarker = mark();
 
         PsiBuilder.Marker blockMarker = mark();
 

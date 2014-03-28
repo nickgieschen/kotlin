@@ -54,7 +54,6 @@ import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace
 public class LazyScriptDescriptor(
         val resolveSession: ResolveSession,
         scriptParameterResolver: ScriptParameterResolver,
-        topDownAnalysisParameters: TopDownAnalysisParameters,
         scriptBodyResolver: ScriptBodyResolver,
         val jetScript: JetScript,
         val _priority: Int

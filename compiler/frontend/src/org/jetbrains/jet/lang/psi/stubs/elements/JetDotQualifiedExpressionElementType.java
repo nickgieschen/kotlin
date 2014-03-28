@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 
 public class JetDotQualifiedExpressionElementType extends JetPlaceHolderStubElementType<JetDotQualifiedExpression> {
     public JetDotQualifiedExpressionElementType(@NotNull @NonNls String debugName) {
@@ -29,5 +32,10 @@ public class JetDotQualifiedExpressionElementType extends JetPlaceHolderStubElem
     @Override
     protected JetPlaceHolderStubElementType<JetDotQualifiedExpression> getInstance() {
         return JetStubElementTypes.DOT_QUALIFIED_EXPRESSION;
+    }
+
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        return PsiTreeUtil.getParentOfType(node.getPsi(), JetImportDirective.class) != null;
     }
 }

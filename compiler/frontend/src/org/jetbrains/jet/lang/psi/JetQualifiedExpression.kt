@@ -27,23 +27,28 @@ public trait JetQualifiedExpression : JetExpression {
 
     public fun getSelectorExpression(): JetExpression?
 
-    public fun getOperationTokenNode(): ASTNode {
-        val operationNode = getNode()!!.findChildByType(JetTokens.OPERATIONS)
+    public fun getOperationTokenNode(): ASTNode
+
+    public fun getOperationSign(): JetToken
+}
+
+
+object JetQualifiedExpressionImpl {
+    public fun JetQualifiedExpression.getOperationTokenNode(): ASTNode {
+        val operationNode = this.getNode()!!.findChildByType(JetTokens.OPERATIONS)
         return operationNode!!
     }
 
-    public fun getOperationSign(): JetToken {
-        return getOperationTokenNode().getElementType() as JetToken
+    public fun JetQualifiedExpression.getOperationSign(): JetToken {
+        return this.getOperationTokenNode().getElementType() as JetToken
     }
-}
 
-public abstract class JetQualifiedExpressionImpl(node: ASTNode) : JetExpressionImpl(node), JetQualifiedExpression {
-    public override fun getReceiverExpression(): JetExpression {
+    public fun JetQualifiedExpression.getReceiverExpression(): JetExpression {
         val left = findChildByClass(javaClass<JetExpression>())
         return left!!
     }
 
-    public override fun getSelectorExpression(): JetExpression? {
+    public fun JetQualifiedExpression.getSelectorExpression(): JetExpression? {
         var node: ASTNode? = getOperationTokenNode()
         while (node != null) {
             val psi = node!!.getPsi()
@@ -51,6 +56,18 @@ public abstract class JetQualifiedExpressionImpl(node: ASTNode) : JetExpressionI
                 return (psi as JetExpression)
             }
             node = node!!.getTreeNext()
+        }
+        return null
+    }
+
+    // copied from PsiElementBase#findChildByClass
+    private fun <T : Any> PsiElement.findChildByClass(aClass: Class<T>): T? {
+        var cur = getFirstChild()
+        while (cur != null) {
+            if (aClass.isInstance(cur)) {
+                return (cur as T)
+            }
+            cur = cur!!.getNextSibling()
         }
         return null
     }

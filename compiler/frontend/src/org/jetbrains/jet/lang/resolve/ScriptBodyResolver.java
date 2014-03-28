@@ -68,9 +68,10 @@ public class ScriptBodyResolver {
             BindingContext bindingContext = trace.getBindingContext();
             for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
                 if (jetDeclaration instanceof JetProperty) {
-                    if (!shouldBeScriptClassMember(jetDeclaration)) continue;
+                    if (!shouldBeScriptClassMember( jetDeclaration)) continue;
 
-                    properties.add((PropertyDescriptorImpl) bindingContext.get(BindingContext.VARIABLE, jetDeclaration));
+                    PropertyDescriptorImpl propertyDescriptor = (PropertyDescriptorImpl) bindingContext.get(BindingContext.VARIABLE, jetDeclaration);
+                    properties.add(propertyDescriptor);
                 }
                 else if (jetDeclaration instanceof JetNamedFunction) {
                     if (!shouldBeScriptClassMember(jetDeclaration)) continue;

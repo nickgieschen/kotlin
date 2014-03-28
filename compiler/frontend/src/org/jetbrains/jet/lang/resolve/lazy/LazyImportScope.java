@@ -89,7 +89,7 @@ public class LazyImportScope implements JetScope, LazyEntity {
 
                     WritableScope directiveImportScope = new WritableScopeImpl(
                             JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING,
-                            "Scope for import '" + directive.getText() + "' resolve in " + toString());
+                            "Scope for import resolve in TEMP" + toString());
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
                     Importer.StandardImporter importer = new Importer.StandardImporter(directiveImportScope);

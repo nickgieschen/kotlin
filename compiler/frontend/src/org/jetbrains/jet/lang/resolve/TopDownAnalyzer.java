@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -80,7 +81,9 @@ public class TopDownAnalyzer {
     @NotNull
     private BodyResolver bodyResolver;
     @NotNull
-    private ScriptHeaderResolver scriptHeaderResolver;
+    private ScriptParameterResolver scriptParameterResolver;
+    @NotNull
+    private ScriptBodyResolver scriptBodyResolver;
     @NotNull
     private Project project;
 
@@ -125,8 +128,13 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setScriptHeaderResolver(@NotNull ScriptHeaderResolver scriptHeaderResolver) {
-        this.scriptHeaderResolver = scriptHeaderResolver;
+    public void setScriptParameterResolver(@NotNull ScriptParameterResolver scriptParameterResolver) {
+        this.scriptParameterResolver = scriptParameterResolver;
+    }
+
+    @Inject
+    public void setScriptBodyResolver(@NotNull ScriptBodyResolver scriptBodyResolver) {
+        this.scriptBodyResolver = scriptBodyResolver;
     }
 
     @Inject
@@ -191,10 +199,17 @@ public class TopDownAnalyzer {
                                 if (file.isScript()) {
                                     JetScript script = file.getScript();
                                     assert script != null;
-                                    scriptHeaderResolver.processScriptHierarchy(
-                                            c,
+
+                                    c.getScripts().put(
                                             script,
-                                            (WritableScope) resolveSession.getScopeProvider().getFileScope(file)
+                                            new LazyScriptDescriptor(
+                                                    resolveSession,
+                                                    scriptParameterResolver,
+                                                    c.getTopDownAnalysisParameters(),
+                                                    scriptBodyResolver,
+                                                    script,
+                                                    ScriptHeaderResolver.getScriptPriority(script)
+                                            )
                                     );
                                 }
                                 else {
@@ -449,6 +464,7 @@ public class TopDownAnalyzer {
     public MutablePackageFragmentProvider getPackageFragmentProvider() {
         return packageFragmentProvider;
     }
+
 }
 
 

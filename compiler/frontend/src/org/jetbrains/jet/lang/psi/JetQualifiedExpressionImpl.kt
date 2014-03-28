@@ -22,17 +22,6 @@ import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.lexer.JetTokens
 
-public trait JetQualifiedExpression : JetExpression {
-    public fun getReceiverExpression(): JetExpression
-
-    public fun getSelectorExpression(): JetExpression?
-
-    public fun getOperationTokenNode(): ASTNode
-
-    public fun getOperationSign(): JetToken
-}
-
-
 object JetQualifiedExpressionImpl {
     public fun JetQualifiedExpression.getOperationTokenNode(): ASTNode {
         val operationNode = this.getNode()!!.findChildByType(JetTokens.OPERATIONS)

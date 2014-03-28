@@ -45,9 +45,7 @@ public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImpo
     }
 
     @Override
-    public PsiJetImportDirectiveStub createStub(
-            @NotNull JetImportDirective psi, StubElement parentStub
-    ) {
+    public PsiJetImportDirectiveStub createStub(@NotNull JetImportDirective psi, StubElement parentStub) {
         return new PsiJetImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder());
     }
 
@@ -59,18 +57,14 @@ public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImpo
 
     @NotNull
     @Override
-    public PsiJetImportDirectiveStub deserialize(
-            @NotNull StubInputStream dataStream, StubElement parentStub
-    ) throws IOException {
+    public PsiJetImportDirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isAbsoluteInRootPackage = dataStream.readBoolean();
         boolean isAllUnder = dataStream.readBoolean();
         return new PsiJetImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder);
     }
 
     @Override
-    public void indexStub(
-            @NotNull PsiJetImportDirectiveStub stub, @NotNull IndexSink sink
-    ) {
+    public void indexStub(@NotNull PsiJetImportDirectiveStub stub, @NotNull IndexSink sink) {
         // do nothing
     }
 }

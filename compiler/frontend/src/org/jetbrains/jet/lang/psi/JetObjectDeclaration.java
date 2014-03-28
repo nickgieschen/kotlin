@@ -93,6 +93,10 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     }
 
     public boolean isClassObject() {
+        PsiJetObjectStub stub = getStub();
+        if (stub != null) {
+            return stub.isClassObject();
+        }
         PsiElement parent = getParent();
         return parent != null && parent.getNode().getElementType().equals(JetNodeTypes.CLASS_OBJECT);
     }

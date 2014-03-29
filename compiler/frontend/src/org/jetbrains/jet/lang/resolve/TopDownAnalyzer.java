@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -81,10 +80,6 @@ public class TopDownAnalyzer {
     @NotNull
     private BodyResolver bodyResolver;
     @NotNull
-    private ScriptParameterResolver scriptParameterResolver;
-    @NotNull
-    private ScriptBodyResolver scriptBodyResolver;
-    @NotNull
     private Project project;
 
     @Inject
@@ -125,16 +120,6 @@ public class TopDownAnalyzer {
     @Inject
     public void setBodyResolver(@NotNull BodyResolver bodyResolver) {
         this.bodyResolver = bodyResolver;
-    }
-
-    @Inject
-    public void setScriptParameterResolver(@NotNull ScriptParameterResolver scriptParameterResolver) {
-        this.scriptParameterResolver = scriptParameterResolver;
-    }
-
-    @Inject
-    public void setScriptBodyResolver(@NotNull ScriptBodyResolver scriptBodyResolver) {
-        this.scriptBodyResolver = scriptBodyResolver;
     }
 
     @Inject
@@ -200,17 +185,7 @@ public class TopDownAnalyzer {
                                     JetScript script = file.getScript();
                                     assert script != null;
 
-                                    c.getScripts().put(
-                                            script,
-                                            new LazyScriptDescriptor(
-                                                    resolveSession,
-                                                    scriptParameterResolver,
-                                                    c.getTopDownAnalysisParameters(),
-                                                    scriptBodyResolver,
-                                                    script,
-                                                    ScriptHeaderResolver.getScriptPriority(script)
-                                            )
-                                    );
+                                    c.getScripts().put(script, resolveSession.getScriptDescriptor(script));
                                 }
                                 else {
                                     JetPackageDirective packageDirective = file.getPackageDirective();

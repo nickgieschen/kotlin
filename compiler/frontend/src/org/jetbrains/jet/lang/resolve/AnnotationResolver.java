@@ -116,7 +116,7 @@ public class AnnotationResolver {
     }
 
     private Annotations resolveAnnotationEntries(
-            @NotNull JetScope scope,
+            @NotNull final JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntryElements,
             @NotNull BindingTrace trace,
             boolean shouldResolveArguments
@@ -128,15 +128,22 @@ public class AnnotationResolver {
             if (descriptor == null) {
                 if (TopDownAnalyzer.LAZY) {
                     descriptor = new LazyAnnotationDescriptor(
-                            new LazyAnnotationsContext(this, storageManager, scope, trace),
+                            new LazyAnnotationsContext(this, storageManager, trace) {
+
+                                @NotNull
+                                @Override
+                                public JetScope getScope() {
+                                    return scope;
+                                }
+                            },
                             entryElement
                     );
                 }
                 else {
                     descriptor = new AnnotationDescriptorImpl();
                     ((AnnotationDescriptorImpl) descriptor).setAnnotationType(resolveAnnotationType(scope, entryElement));
+                    trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
                 }
-                trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
             }
             if (shouldResolveArguments) {
                 resolveAnnotationArguments(entryElement, scope, trace);
